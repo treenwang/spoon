@@ -7,6 +7,7 @@
  */
 package spoon.support.compiler.jdt;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.eclipse.jdt.core.compiler.CharOperation;
 import org.eclipse.jdt.internal.compiler.ast.ASTNode;
 import org.eclipse.jdt.internal.compiler.ast.AllocationExpression;
@@ -666,11 +667,12 @@ public class ReferenceBuilder {
 		final String[] namesParameterized = CharOperation.charArrayToStringArray(ref.getParameterizedTypeName());
 		String nameParameterized = CharOperation.toString(ref.getParameterizedTypeName());
 		String typeName = CharOperation.toString(ref.getTypeName());
+		String packageName = getPackageName(typeName);
 
 		int index = namesParameterized.length - 1;
 		for (; index >= 0; index--) {
 			// Start at the end to get the class name first.
-			CtTypeReference main = getTypeReference(namesParameterized[index]);
+			CtTypeReference main = getTypeReference(namesParameterized[index], packageName);
 			if (main == null) {
 				break;
 			}
@@ -704,6 +706,21 @@ public class ReferenceBuilder {
 		}
 		sb.append(a[endIndex]);
 		return sb.toString();
+	}
+
+
+	public <T> CtTypeReference<T> getTypeReference(String name, String packageName) {
+		CtTypeReference<T> typeReference = getTypeReference(name);
+		if (typeReference == null) {
+			return null;
+		}
+		if (packageName != null && typeReference.getPackage() != null && !packageName.equals(typeReference.getPackage().getQualifiedName())) {
+			return null;
+		}
+		if (packageName != null && typeReference.getPackage() == null) {
+			typeReference.setPackage(this.jdtTreeBuilder.getFactory().Package().createReference(packageName));
+		}
+		return typeReference;
 	}
 
 	/**
@@ -904,7 +921,7 @@ public class ReferenceBuilder {
 
 		if (!this.jdtTreeBuilder.getContextBuilder().ignoreComputeImports) {
 			final CtReference declaring = this.getDeclaringReferenceFromImports(binding.sourceName());
-			if (declaring instanceof CtPackageReference) {
+			if (!ArrayUtils.contains(binding.getFileName(), '/') && declaring instanceof CtPackageReference) {
 				ref.setPackage((CtPackageReference) declaring);
 			} else if (declaring instanceof CtTypeReference) {
 				ref.setDeclaringType((CtTypeReference) declaring);
@@ -1092,14 +1109,31 @@ public class ReferenceBuilder {
 		}
 
 		CtTypeReference<?> ref = this.jdtTreeBuilder.getFactory().Core().createTypeReference();
-		ref.setSimpleName(stripPackageName(readableName));
-		final CtReference declaring = this.getDeclaringReferenceFromImports(binding.sourceName());
+		String className = stripPackageName(readableName);
+		String packageName = getPackageName(readableName);
+		ref.setSimpleName(className);
+		CtReference declaring = this.getDeclaringReferenceFromImports(binding.sourceName());
+		if (declaring == null && packageName != null) {
+			declaring = this.jdtTreeBuilder.getFactory().Package().createReference(packageName);
+		}
 		setPackageOrDeclaringType(ref, declaring);
 
 		return ref;
 	}
 
-	private static String stripPackageName(String fullyQualifiedName) {
+	public static String getPackageName(String fullyQualifiedName) {
+
+		if (fullyQualifiedName.indexOf('.') == -1) {
+			return null;
+		}
+		String className = stripPackageName(fullyQualifiedName);
+		if (fullyQualifiedName.equals(className)) {
+			return null;
+		}
+		return fullyQualifiedName.substring(0, fullyQualifiedName.indexOf(className) - 1);
+	}
+
+	public static String stripPackageName(String fullyQualifiedName) {
 		// strip package name, assuming package names start with a lowercase letter
 		int s = 0;
 		while (Character.isLowerCase(fullyQualifiedName.charAt(s))) {

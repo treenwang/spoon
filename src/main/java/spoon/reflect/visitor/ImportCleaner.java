@@ -7,6 +7,7 @@
  */
 package spoon.reflect.visitor;
 
+import org.apache.commons.lang3.StringUtils;
 import spoon.SpoonException;
 import spoon.experimental.CtUnresolvedImport;
 import spoon.javadoc.internal.JavadocDescriptionElement;
@@ -36,6 +37,7 @@ import spoon.reflect.reference.CtTypeReference;
 import spoon.reflect.visitor.filter.TypeFilter;
 import spoon.support.Experimental;
 import spoon.support.adaption.TypeAdaptor;
+import spoon.support.compiler.jdt.ReferenceBuilder;
 import spoon.support.util.ModelList;
 import spoon.support.visitor.equals.EqualsVisitor;
 
@@ -215,7 +217,15 @@ public class ImportCleaner extends ImportAnalyzer<ImportCleaner.Context> {
 			}
 			String importRefID = getImportRefID(ref);
 			if (!computedImports.containsKey(importRefID)) {
-				computedImports.put(importRefID, getFactory().Type().createImport(ref));
+				CtImport newImport = getFactory().Type().createImport(ref);
+				if (isSimpleNameExists(computedImports.values(), newImport)) {
+					// If simple name already exists add it to compilationUnit.imports()
+					if (!isSimpleNameExists(compilationUnit.getImports(), newImport)) {
+						ModelList<CtImport> imports = compilationUnit.getImports();
+						imports.add(newImport);
+					}
+				}
+				computedImports.put(importRefID, newImport);
 			}
 		}
 
@@ -239,6 +249,28 @@ public class ImportCleaner extends ImportAnalyzer<ImportCleaner.Context> {
 				return true;
 			}
 			return false;
+		}
+
+		private boolean isSimpleNameExists(Collection<CtImport> imports, CtImport newImport) {
+			if (imports == null || imports.isEmpty()) {
+				return false;
+			}
+			String typeName = getImportSimpleName(newImport);
+			return imports.stream().anyMatch(ctImport -> StringUtils.equals(typeName, getImportSimpleName(ctImport)));
+		}
+
+		private String getImportSimpleName(CtImport newImport) {
+			if (newImport == null) {
+				return null;
+			}
+			String typeName = null;
+			if (newImport instanceof CtUnresolvedImport) {
+				String unresolvedReference = ((CtUnresolvedImport) newImport).getUnresolvedReference();
+				typeName = ReferenceBuilder.stripPackageName(unresolvedReference);
+			} else if (newImport.getReference() != null) {
+				typeName = newImport.getReference().getSimpleName();
+			}
+			return typeName;
 		}
 
 		void onCompilationUnitProcessed(CtCompilationUnit compilationUnit) {

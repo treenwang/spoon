@@ -26,12 +26,7 @@ import spoon.compiler.SpoonResource;
 import spoon.compiler.SpoonResourceHelper;
 import spoon.experimental.CtUnresolvedImport;
 import spoon.reflect.CtModel;
-import spoon.reflect.code.CtConstructorCall;
-import spoon.reflect.code.CtInvocation;
-import spoon.reflect.code.CtLocalVariable;
-import spoon.reflect.code.CtStatement;
-import spoon.reflect.code.CtThisAccess;
-import spoon.reflect.code.CtTypeAccess;
+import spoon.reflect.code.*;
 import spoon.reflect.cu.CompilationUnit;
 import spoon.reflect.declaration.CtClass;
 import spoon.reflect.declaration.CtConstructor;
@@ -1773,11 +1768,13 @@ public class ImportTest {
 	void testDuplicatedImport() throws IOException {
 		String code1 = "package io.example.pack2;\n" +
 				"    import io.example.pack2.Class1;\n" +
+				"    import static io.example.Constants.TOKEN;\n" +
 				"    public class Example{\n" +
 				"    Class1<io.example.pack3.Class1> class1;\n" +
 				"    io.example.pack4.Class1 class2;\n" +
 				"      io.example.pack5.Class1 add(io.example.pack6.Class1<io.example.pack7.Class1> value){\n" +
 				"          io.example.pack8.Class1 class1 = null;\n" +
+				"          String token = TOKEN;\n" +
 				"      }\n" +
 				"    }\n";
 		CtClass<?> class1 = Launcher.parseClass(code1);
@@ -1789,8 +1786,13 @@ public class ImportTest {
 		assertEquals("io.example.pack6.Class1", addMethod.getParameters().get(0).getType().getQualifiedName());
 		assertEquals("io.example.pack7.Class1", addMethod.getParameters().get(0).getType().getActualTypeArguments().get(0).getQualifiedName());
 		assertEquals("io.example.pack8.Class1", ((CtLocalVariable<?>)addMethod.getBody().getStatement(0)).getType().getQualifiedName());
-		List<String> imports = getTypeImportsFromSourceCode(class1.toStringWithImports());
-		assertEquals(1, imports.stream().filter(im -> im.endsWith("Class1")).count());
+		CtExpression<?> tokenAssignment = ((CtLocalVariable<?>) addMethod.getBody().getStatement(1)).getAssignment();
+		assertInstanceOf(CtFieldRead.class, tokenAssignment);
+		assertEquals("io.example.Constants", (((CtFieldRead<?>)tokenAssignment).getVariable()).getDeclaringType().getQualifiedName());
+		System.out.println(class1.toStringWithImports());
+//		List<String> imports = getTypeImportsFromSourceCode(class1.toStringWithImports());
+//		assertEquals(1, imports.stream().filter(im -> im.endsWith("Class1")).count());
+//		assertEquals(1, imports.stream().filter(im -> im.endsWith("Class1")).count());
 
 		//duplicated import source file
 		final Launcher launcher = new Launcher();
