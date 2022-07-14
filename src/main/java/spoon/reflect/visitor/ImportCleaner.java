@@ -47,6 +47,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -220,7 +221,7 @@ public class ImportCleaner extends ImportAnalyzer<ImportCleaner.Context> {
 				CtImport newImport = getFactory().Type().createImport(ref);
 				if (isSimpleNameExists(computedImports.values(), newImport)) {
 					// If simple name already exists add it to compilationUnit.imports()
-					if (!isSimpleNameExists(compilationUnit.getImports(), newImport)) {
+					if (!StringUtils.equals(getMainTypeName(), getImportSimpleName(newImport)) && !isSimpleNameExists(compilationUnit.getImports(), newImport)) {
 						ModelList<CtImport> imports = compilationUnit.getImports();
 						imports.add(newImport);
 					}
@@ -234,6 +235,24 @@ public class ImportCleaner extends ImportAnalyzer<ImportCleaner.Context> {
 					.stream()
 					.anyMatch(ctImport -> ctImport.getReference() != null
 							&& isEqualAfterSkippingRole(ctImport.getReference(), ref, CtRole.TYPE_ARGUMENT));
+		}
+
+		private String getMainTypeName() {
+			List<CtType<?>> declaredTypes = compilationUnit.getDeclaredTypes();
+			if (declaredTypes == null || declaredTypes.isEmpty()) {
+				return "";
+			}
+			if (compilationUnit.getFile() == null) {
+				return declaredTypes.get(0).getSimpleName();
+			}
+			for (CtType<?> t : declaredTypes) {
+				String name = compilationUnit.getFile().getName();
+				name = name.substring(0, name.lastIndexOf('.'));
+				if (t.getSimpleName().equals(name)) {
+					return name;
+				}
+			}
+			return declaredTypes.get(0).getSimpleName();
 		}
 
 		/**

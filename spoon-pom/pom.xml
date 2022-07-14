@@ -87,21 +87,34 @@
         <tag>HEAD</tag>
     </scm>
 
+<!--    <distributionManagement>-->
+<!--        <repository>-->
+<!--            <id>ossrh</id>-->
+<!--            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>-->
+<!--        </repository>-->
+<!--        <snapshotRepository>-->
+<!--            <id>ow2.org-snapshot</id>-->
+<!--            <name>Maven Repository for Spoon Snapshots</name>-->
+<!--            <url>https://repository.ow2.org/nexus/content/repositories/snapshots/</url>-->
+<!--        </snapshotRepository>-->
+<!--        <site>-->
+<!--            <id>gforge.inria.fr-site</id>-->
+<!--            <name>inria</name>-->
+<!--            <url>scp://scm.gforge.inria.fr/home/groups/spoon/htdocs/mvnsites</url>-->
+<!--        </site>-->
+<!--    </distributionManagement>-->
+
     <distributionManagement>
-        <repository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
         <snapshotRepository>
-            <id>ow2.org-snapshot</id>
-            <name>Maven Repository for Spoon Snapshots</name>
-            <url>https://repository.ow2.org/nexus/content/repositories/snapshots/</url>
+            <id>sonatype-nexus-snapshots</id>
+            <name>Sonatype Nexus Snapshots</name>
+            <url>https://solution.aaxisgroup.net/nexus/repository/libs-snapshot-local</url>
         </snapshotRepository>
-        <site>
-            <id>gforge.inria.fr-site</id>
-            <name>inria</name>
-            <url>scp://scm.gforge.inria.fr/home/groups/spoon/htdocs/mvnsites</url>
-        </site>
+        <repository>
+            <id>sonatype-nexus</id>
+            <name>Nexus Release Repository</name>
+            <url>https://solution.aaxisgroup.net/nexus/repository/libs-release-local</url>
+        </repository>
     </distributionManagement>
 
     <build>
@@ -159,24 +172,24 @@
                 <version>2.8.2</version>
             </plugin>
 
-            <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
-                <version>1.6.13</version>
-                <extensions>true</extensions>
-                <configuration>
-                    <serverId>ossrh</serverId>
-                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
-                </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.apache.maven.wagon</groupId>
-                        <artifactId>wagon-ssh</artifactId>
-                        <version>3.5.2</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>org.sonatype.plugins</groupId>-->
+<!--                <artifactId>nexus-staging-maven-plugin</artifactId>-->
+<!--                <version>1.6.13</version>-->
+<!--                <extensions>true</extensions>-->
+<!--                <configuration>-->
+<!--                    <serverId>ossrh</serverId>-->
+<!--                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>-->
+<!--                    <autoReleaseAfterClose>true</autoReleaseAfterClose>-->
+<!--                </configuration>-->
+<!--                <dependencies>-->
+<!--                    <dependency>-->
+<!--                        <groupId>org.apache.maven.wagon</groupId>-->
+<!--                        <artifactId>wagon-ssh</artifactId>-->
+<!--                        <version>3.5.2</version>-->
+<!--                    </dependency>-->
+<!--                </dependencies>-->
+<!--            </plugin>-->
 
 
             <plugin>

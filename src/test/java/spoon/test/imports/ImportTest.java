@@ -1789,7 +1789,7 @@ public class ImportTest {
 		CtExpression<?> tokenAssignment = ((CtLocalVariable<?>) addMethod.getBody().getStatement(1)).getAssignment();
 		assertInstanceOf(CtFieldRead.class, tokenAssignment);
 		assertEquals("io.example.Constants", (((CtFieldRead<?>)tokenAssignment).getVariable()).getDeclaringType().getQualifiedName());
-		System.out.println(class1.toStringWithImports());
+//		System.out.println(class1.toStringWithImports());
 //		List<String> imports = getTypeImportsFromSourceCode(class1.toStringWithImports());
 //		assertEquals(1, imports.stream().filter(im -> im.endsWith("Class1")).count());
 //		assertEquals(1, imports.stream().filter(im -> im.endsWith("Class1")).count());
