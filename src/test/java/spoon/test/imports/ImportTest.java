@@ -26,7 +26,14 @@ import spoon.compiler.SpoonResource;
 import spoon.compiler.SpoonResourceHelper;
 import spoon.experimental.CtUnresolvedImport;
 import spoon.reflect.CtModel;
-import spoon.reflect.code.*;
+import spoon.reflect.code.CtConstructorCall;
+import spoon.reflect.code.CtExpression;
+import spoon.reflect.code.CtFieldRead;
+import spoon.reflect.code.CtInvocation;
+import spoon.reflect.code.CtLocalVariable;
+import spoon.reflect.code.CtStatement;
+import spoon.reflect.code.CtThisAccess;
+import spoon.reflect.code.CtTypeAccess;
 import spoon.reflect.cu.CompilationUnit;
 import spoon.reflect.declaration.CtClass;
 import spoon.reflect.declaration.CtConstructor;
@@ -39,11 +46,7 @@ import spoon.reflect.declaration.CtParameter;
 import spoon.reflect.declaration.CtType;
 import spoon.reflect.factory.Factory;
 import spoon.reflect.factory.FactoryImpl;
-import spoon.reflect.reference.CtExecutableReference;
-import spoon.reflect.reference.CtFieldReference;
-import spoon.reflect.reference.CtPackageReference;
-import spoon.reflect.reference.CtTypeMemberWildcardImportReference;
-import spoon.reflect.reference.CtTypeReference;
+import spoon.reflect.reference.*;
 import spoon.reflect.visitor.CtImportVisitor;
 import spoon.reflect.visitor.DefaultJavaPrettyPrinter;
 import spoon.reflect.visitor.PrettyPrinter;
@@ -1772,8 +1775,8 @@ public class ImportTest {
 				"    public class Example{\n" +
 				"    Class1<io.example.pack3.Class1> class1;\n" +
 				"    io.example.pack4.Class1 class2;\n" +
-				"      io.example.pack5.Class1 add(io.example.pack6.Class1<io.example.pack7.Class1> value){\n" +
-				"          io.example.pack8.Class1 class1 = null;\n" +
+				"      io.example.pack5.Class1 add(io.example.pack6.Class1<io.example.pack7.Class1> value, io.example.pack8.Class1<io.example.pack9.Class1>... value2){\n" +
+				"          io.example.pack10.Class1 class1 = null;\n" +
 				"          String token = TOKEN;\n" +
 				"      }\n" +
 				"    }\n";
@@ -1785,7 +1788,11 @@ public class ImportTest {
 		assertEquals("io.example.pack5.Class1", addMethod.getType().getQualifiedName());
 		assertEquals("io.example.pack6.Class1", addMethod.getParameters().get(0).getType().getQualifiedName());
 		assertEquals("io.example.pack7.Class1", addMethod.getParameters().get(0).getType().getActualTypeArguments().get(0).getQualifiedName());
-		assertEquals("io.example.pack8.Class1", ((CtLocalVariable<?>)addMethod.getBody().getStatement(0)).getType().getQualifiedName());
+		assertInstanceOf(CtArrayTypeReference.class, addMethod.getParameters().get(1).getType());
+		CtArrayTypeReference<?> param1 = (CtArrayTypeReference<?>)addMethod.getParameters().get(1).getType();
+		assertEquals("io.example.pack8.Class1", param1.getComponentType().getQualifiedName());
+		assertEquals("io.example.pack9.Class1", param1.getComponentType().getActualTypeArguments().get(0).getQualifiedName());
+		assertEquals("io.example.pack10.Class1", ((CtLocalVariable<?>)addMethod.getBody().getStatement(0)).getType().getQualifiedName());
 		CtExpression<?> tokenAssignment = ((CtLocalVariable<?>) addMethod.getBody().getStatement(1)).getAssignment();
 		assertInstanceOf(CtFieldRead.class, tokenAssignment);
 		assertEquals("io.example.Constants", (((CtFieldRead<?>)tokenAssignment).getVariable()).getDeclaringType().getQualifiedName());
