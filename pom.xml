@@ -18,7 +18,7 @@
     <groupId>io.aaxis.spoon</groupId>
   <artifactId>spoon-core</artifactId>
   <packaging>jar</packaging>
-  <version>10.2.0-RC2</version>
+  <version>10.2.0-RC3</version>
   <name>Spoon Core</name>
   <description>Spoon is a tool for meta-programming, analysis and transformation of Java programs.</description>
   <url>http://spoon.gforge.inria.fr/</url>
@@ -87,7 +87,7 @@
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-model</artifactId>
-      <version>[3.6.0,)</version>
+      <version>3.8.6</version>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
