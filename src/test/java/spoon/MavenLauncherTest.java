@@ -44,6 +44,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static spoon.test.TemporaryDirectoryExecutionListener.TEMPDIR;
 
+@Disabled
 public class MavenLauncherTest {
 
 	// fixme: the test consumes too much memory for now

@@ -9,12 +9,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-<!--  <parent>-->
-<!--    <groupId>fr.inria.gforge.spoon</groupId>-->
-<!--    <artifactId>spoon-pom</artifactId>-->
-<!--    <version>11.1.0</version>-->
-<!--    <relativePath>spoon-pom</relativePath>-->
-<!--  </parent>-->
+  <parent>
+    <groupId>fr.inria.gforge.spoon</groupId>
+    <artifactId>spoon-pom</artifactId>
+    <version>11.1.1-RC1</version>
+    <relativePath>spoon-pom</relativePath>
+  </parent>
 
   <groupId>io.aaxis.spoon</groupId>
   <artifactId>spoon-core</artifactId>
@@ -23,22 +23,7 @@
   <name>Spoon Core</name>
   <description>Spoon is a tool for meta-programming, analysis and transformation of Java programs.</description>
   <url>https://spoon.gforge.inria.fr/</url>
-  <distributionManagement>
-    <repository>
-      <id>sonatype-nexus</id>
-      <url>https://solution.aaxisgroup.net/nexus/repository/libs-release-local</url>
-    </repository>
-    <snapshotRepository>
-      <id>sonatype-nexus-snapshots</id>
-      <name>Sonatype Nexus Snapshots</name>
-      <url>https://solution.aaxisgroup.net/nexus/repository/libs-snapshot-local</url>
-    </snapshotRepository>
-    <site>
-      <id>sonatype-nexus</id>
-      <name>Nexus Release Repository</name>
-      <url>https://solution.aaxisgroup.net/nexus/repository/libs-release-local</url>
-    </site>
-  </distributionManagement>
+
 
   <properties>
     <sonar.coverage.exclusions>
