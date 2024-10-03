@@ -10,16 +10,16 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>fr.inria.gforge.spoon</groupId>
+    <groupId>io.aaxis.spoon</groupId>
     <artifactId>spoon-pom</artifactId>
-    <version>11.1.1-RC1</version>
+    <version>11.1.1-RC2</version>
     <relativePath>spoon-pom</relativePath>
   </parent>
 
   <groupId>io.aaxis.spoon</groupId>
   <artifactId>spoon-core</artifactId>
   <packaging>jar</packaging>
-  <version>11.1.1-RC1</version>
+  <version>11.1.1-RC2</version>
   <name>Spoon Core</name>
   <description>Spoon is a tool for meta-programming, analysis and transformation of Java programs.</description>
   <url>https://spoon.gforge.inria.fr/</url>

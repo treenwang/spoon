@@ -327,6 +327,7 @@ Change version:
 > MavenLauncherTest maybe stuck, need to be disabled.
 
 ## Publish to local
+`mvn -f spoon-pom/pom.xml install`
 `mvn source:jar install`
 ## Publish to aaxis.io
 Change to distributionManagement.repository in spoon-pom/pom.xml to below:
@@ -348,6 +349,8 @@ Change to distributionManagement.repository in spoon-pom/pom.xml to below:
         </site>
     </distributionManagement>
 ```
+Publish spoon-pom
+`mvn -f spoon-pom/pom.xml deploy -s ./settings.xml`
 Run
 `mvn source:jar deploy -s ./settings.xml`
 Run without test
